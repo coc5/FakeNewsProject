@@ -23,7 +23,7 @@ public class FastAPIController {
             
             // 2. 응답 데이터 Model에 저장하여 JSP에 사용할 수 있도록 설정
             model.addAttribute("fastApiData", response.getBody()); // JSP에 데이터 전달
-        } catch (Exception e) { // 3. 예외 발생 시 "FastAPI 요청 실패"라는 메시지를 JSP에 ㅎ표시
+        } catch (Exception e) { // 3. 예외 발생 시 "FastAPI 요청 실패"라는 메시지를 JSP에 표시
             model.addAttribute("fastApiData", Map.of("message", "FastAPI 요청 실패", "status", "500"));
         }
 

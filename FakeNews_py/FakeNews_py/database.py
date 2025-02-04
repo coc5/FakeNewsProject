@@ -3,20 +3,28 @@ import pymysql
 import pandas as pd
 
 # MariaDB 연결 설정
-conn = pymysql.connect(
-    host = 'localhost', # 데이터베이스 주소
-    user = 'root', # 사용자 이름
-    password = '1234', # 비밀번호
-    database = 'fake_news',
-    charset = 'utf8mb4'
-)
+def create_table():
+    conn = pymysql.connect(
+        host = 'localhost', # 데이터베이스 주소
+        user = 'root', # 사용자 이름
+        password = '1234', # 비밀번호
+        database = 'sys',
+        charset = 'utf8mb4'
+    )
 
-# SQL 쿼리 실행
-query = "SELECT id, title, content, label FROM articles" # 테이블 이름과 컬럼 수정
-data = pd.read_sql(query, conn)
+    cursor = conn.cursor()
 
-# 데이터 확인
-print(data.head())
+    create_table_query = """
+        CREATE TABLE IF NOT EXISTS news (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            title VARCHAR(255) NOT NULL,
+            content TEXT NOT NULL,
+            date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """
 
-# 연결 종료
-conn.close()
+    cursor.execute(create_table_query)
+    conn.commit()
+    conn.close()
+
+create_table()
