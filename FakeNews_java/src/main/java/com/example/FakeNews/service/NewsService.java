@@ -34,4 +34,7 @@ public class NewsService {
         System.out.println("Saved annotation: " + title + " | " + label);
     }
 
+    public List<News> getAllNews() {
+        return newsRepository.findAll();
+    }
 }
