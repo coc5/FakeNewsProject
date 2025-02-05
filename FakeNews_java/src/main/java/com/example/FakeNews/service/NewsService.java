@@ -1,10 +1,13 @@
 package com.example.FakeNews.service;
 
+import com.example.FakeNews.model.News;
 import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 @Service
 public class NewsService {
@@ -35,6 +38,11 @@ public class NewsService {
     }
 
     public List<News> getAllNews() {
-        return newsRepository.findAll();
+        // 뉴스 데이터 생성(DB에서 가져옴)
+        List<News> newsList = new ArrayList<>();
+        newsList.add(new News(1L, "제목 1", "내용 1", LocalDate.now()));
+        newsList.add(new News(2L, "제목 2", "내용 2", LocalDate.now().minusDays(1)));
+        newsList.add(new News(3L, "제목 3", "내용 3", LocalDate.now().minusDays(2)));
+        return newsList;
     }
 }
