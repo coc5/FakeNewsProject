@@ -20,7 +20,7 @@ def summarize_news(text):
     response = model.generate_content(f"다음 뉴스를 요약해줘:\n\n{text}")
     return response.text  # 요약된 뉴스 반환
 # ✅ 2️⃣ 학습된 모델 불러오기 (.h5 파일)
-model_path = "C:/FakeNewsProject/FakeNews_py/fakenew-detector/datatext_binary_model.h5"  # 모델 파일 경로
+model_path = "C:/FakeNewsProject/FakeNews_py/ModelFolder/datatext_binary_model.h5"  # 모델 파일 경로
 model = tf.keras.models.load_model(model_path)
 # ✅ 3️⃣ 예측할 뉴스 텍스트 입력
 news_texts = [
@@ -101,12 +101,29 @@ precision = precision_score(true_labels, is_fake)
 recall = recall_score(true_labels, is_fake)
 f1 = f1_score(true_labels, is_fake)
 
+# --------------------------------------------------------------------
+# 확률 보정 함수(너무 작은 값은 올리고, 너무 큰 값은 낮춤)
+def adjust_probabilities(pred, alpha = 0.2):
+    return (1 - alpha) * pred + alpha * 0.5
+
+# 모델의 원본 예측값
+raw_predictions = np.array([0.33028343, 0., 0., 0., 0., 1.])
+
+# 조정된 확률값 적용
+adjusted_predictions = adjust_probabilities(raw_predictions)
+
+print("조정된 확률값: ", adjusted_predictions)
+# --------------------------------------------------------------------
+
+
 # ✅ 성능 분석 결과 출력 (저장 X)
 print(f"🎯 모델 성능 평가 (값 저장 없이 출력만)")
 print(f"✅ 정확도 (Accuracy): {accuracy:.2f}")
 print(f"✅ 정밀도 (Precision): {precision:.2f}")
 print(f"✅ 재현율 (Recall): {recall:.2f}")
 print(f"✅ F1-score: {f1:.2f}")
+print("🔍 모델 원본 예측값 확인:")
+print(prediction.flatten())
 print(prediction)
 print("-" * 50)
 
@@ -114,7 +131,9 @@ print("-" * 50)
 for i, (original_text, summary) in enumerate(zip(news_texts, summarized_news_texts)):
     print(f"🔹 원본 뉴스 {i+1}: {original_text[:100]}...\n")  # 너무 길면 앞부분만 출력
     print(f"🔸 요약된 뉴스: {summary[:100]}...\n")
-    print(f"⚖ 판별 결과: {'⚠ 가짜 뉴스' if is_fake[i] else '✔ 진짜 뉴스'}")
+    # 예측 확률값을 함께 출력
+for i, prob in enumerate(prediction.flatten()):
+    print(f"⚖ 판별 결과: {'⚠ 가짜 뉴스' if is_fake[i] else '✔ 진짜 뉴스'} (확률: {prob:.2%})")
     print("-" * 50)
 # ✅ 9️⃣ 결과 출력
 for i, (original_text, summary) in enumerate(zip(news_texts, summarized_news_texts)):
